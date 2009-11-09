@@ -2,7 +2,7 @@ module StopForumSpam
   class Spammer   
     include HTTParty
     format :xml
-    base_uri("http://stopforumspam.com:80")
+    base_uri("http://stopforumspam.com")
     
     attr_reader :type, :id, :frequency, :last_seen
     
@@ -27,7 +27,7 @@ module StopForumSpam
     end
         
     def self.is_spammer?(id)
-      StopForumSpam::Spammer.new(id).appears?
+      new(id).appears?
     end
     
     private
