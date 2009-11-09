@@ -1,26 +1,30 @@
 = stop_forum_spam
 
-* http://github.com/#{github_username}/#{project_name}
+* http://github.com/ldenman/stop_forum_spam
 
 == DESCRIPTION:
-
-FIX (describe your package)
+Small api wrapper for querying a spammer based on ip, email, or username information stored on http://stopforumspam.com
 
 == FEATURES/PROBLEMS:
 
-* FIX (list of features or problems)
+ * Need to implement posting a spammer
 
 == SYNOPSIS:
 
-  FIX (code sample of usage)
-
+  StopForumSpam::Spammer.is_spammer?('127.0.0.1')
+  StopForumSpam::Spammer.is_spammer?('spammer@spamcity.ru')
+  StopForumSpam::Spammer.is_spammer?('Spam4Life')
+  
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+* httparty
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* sudo gem install gemcutter
+* sudo gem tumble
+* sudo gem install httpary
+* sudo gem install stop_forum_spam
 
 == LICENSE:
 
