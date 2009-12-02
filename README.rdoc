@@ -13,9 +13,11 @@ Thanks to Russ Jackson for providing an api into stopforumspam.com.
 
 == SYNOPSIS:
 
-  StopForumSpam::Spammer.is_spammer?('127.0.0.1') #=> false
-  StopForumSpam::Spammer.is_spammer?('spammer@spamcity.ru') #=> true
-  StopForumSpam::Spammer.is_spammer?('Spam4Life') #=> true
+>> StopForumSpam::Spammer.is_spammer?('12@42up.com') # by email
+=> true
+>> StopForumSpam::Spammer.is_spammer?('broocorkidica') # by username
+=> true
+>> StopForumSpam::Spammer.is_spammer?('212.235.107.199') # by IP
   
 == REQUIREMENTS:
 
