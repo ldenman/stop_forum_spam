@@ -14,7 +14,9 @@ Thanks to Russ Jackson for providing an api into stopforumspam.com.
 == SYNOPSIS:
 
 StopForumSpam::Spammer.is_spammer?('12@42up.com') # by email
+
 StopForumSpam::Spammer.is_spammer?('broocorkidica') # by username
+
 StopForumSpam::Spammer.is_spammer?('212.235.107.199') # by IP
   
 == REQUIREMENTS:
