@@ -5,9 +5,10 @@ require 'fakeweb'
 
 require File.join(File.dirname(__FILE__), '..', 'lib', 'stop_forum_spam')
 
-def fake_get_response(params, options={})
-  url = "http://stopforumspam.com/api?" + params
-  options[:type], value = params.split('=')
+def fake_get_response(options={})
+  id_type = [:ip, :email, :username].select { |k| options.has_key?(k) }.first.to_s
+  url = "http://stopforumspam.com/api?#{id_type}=#{options[id_type.to_sym]}"
+  options[:type] = id_type
   options[:string] = format_options(options)
   FakeWeb.register_uri(:get, url, options)
 end
