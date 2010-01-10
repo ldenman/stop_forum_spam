@@ -1,10 +1,9 @@
 module StopForumSpam
   class Spammer   
-    include HTTParty
-    format :xml
-    base_uri("http://stopforumspam.com")
-    
     attr_reader :id, :type, :frequency, :last_seen, :appears
+    
+    alias_method :count, :frequency
+    alias_method :appears?, :appears
     
     def initialize(id)
       @id         = id
@@ -14,14 +13,6 @@ module StopForumSpam
       @appears    = response['appears'] == 'yes' ? true : false
     end
     
-    def appears?
-      appears
-    end
-    
-    def count
-      frequency
-    end
-        
     def self.is_spammer?(id)
       new(id).appears?
     end
@@ -37,7 +28,8 @@ module StopForumSpam
         @response ||= make_request['response']
       end
       def make_request
-        self.class.get('/api', :query => {@type.to_sym => @id})
+        client = StopForumSpam::Client.new
+        client.get(:query => {@type.to_sym => @id})
       end
   end
 end

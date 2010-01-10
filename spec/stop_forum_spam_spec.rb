@@ -1,104 +1,29 @@
 require 'spec_helper'
 
-describe StopForumSpam::Spammer do
-  FakeWeb.allow_net_connect = false
+describe StopForumSpam::Client do
+
+  context "a new client" do
+    it "should instantiate" do
+      StopForumSpam::Client.new.class.should == StopForumSpam::Client
+    end
+
+    it "should initialize with an optional api key" do
+      client = StopForumSpam::Client.new('123456789')
+      client.api_key.should == '123456789'
+    end
+  end
   
-  context 'initializing a spammer by ip, email, and username' do
-    { :ip => '127.0.0.1', 
-      :email => 'test@tester.com', 
-      :username => 'testuser'
-    }.each do |id_type, v|
-      
-      it "initializes with an #{id_type}" do
-        fake_get_response(id_type => v)
-        StopForumSpam::Spammer.new(v).class.should == StopForumSpam::Spammer
+  context 'posts a spammer' do
+    context 'with a valid ip address, email address, and username' do
+      before do
+        fake_post_response('123456789', '127.0.0.1', 'spammer%40ru.com', 'spammer500', :string => "valid post")
+        client = StopForumSpam::Client.new('123456789')
+        @response = client.post(:id_address => '127.0.0.1', :email => 'spammer@ru.com', :username => 'spammer500')
+      end
+    
+      it "should return true " do
+        @response.should be_true
       end
     end
   end
-
-  it "should initialize a spammer by ip" do
-    fake_get_response(:ip => '127.0.0.1')
-    spammer = StopForumSpam::Spammer.new('127.0.0.1')
-    spammer.type.should == 'ip'
-  end
-
-  it 'should initialize a spammer by email' do
-    fake_get_response(:email => 'test%40tester.com')
-    spammer = StopForumSpam::Spammer.new('test@tester.com')
-    spammer.type.should == 'email'
-  end
-
-  it 'should initialize a spammer by username' do
-    fake_get_response(:username => 'testuser')
-    spammer = StopForumSpam::Spammer.new('testuser')
-    spammer.type.should == 'username'
-  end
-
-  it 'should have attributes from the response' do
-    last_seen = "2009-04-16 23:11:19"
-    fake_get_response(:ip => '127.0.0.1', :last_seen => last_seen, :appears => true)
-    spammer = StopForumSpam::Spammer.new('127.0.0.1')
-    spammer.type.should == "ip"
-    spammer.appears?.should be_true
-    spammer.last_seen.should == last_seen
-  end
-
-  context '#count' do
-    it 'should count the amount of times the spammer has been added' do
-      fake_get_response(:ip => '127.0.0.1', :frequency => 41)
-      spammer = StopForumSpam::Spammer.new('127.0.0.1')
-      spammer.count.should == '41'
-    end
-  end
-
-  it 'should have an id' do
-    fake_get_response(:ip => '127.0.0.1')
-    spammer = StopForumSpam::Spammer.new('127.0.0.1')
-    spammer.id.should == '127.0.0.1'
-  end
-
-  it "should find a spammer by ip" do
-    fake_get_response(:ip => '127.0.0.1', :appears => true)
-    StopForumSpam::Spammer.is_spammer?("127.0.0.1").should be_true
-  end
-
-  it "should return false when the spammer is not found by ip" do
-    fake_get_response(:ip => '127.0.0.1', :appears => false)
-    StopForumSpam::Spammer.is_spammer?('127.0.0.1').should be_false
-  end
-
-  it "should find a spammer by email" do
-    fake_get_response(:email => 'test%40tester.com', :appears => true)
-    StopForumSpam::Spammer.is_spammer?("test@tester.com").should be_true
-  end
-
-  it "should return false when a spammer is not found by email" do
-    fake_get_response(:email => 'test%40tester.com', :appears => false)
-    StopForumSpam::Spammer.is_spammer?('test@tester.com').should be_false
-  end
-
-  it "should find a spammer by username" do
-    fake_get_response(:username => 'testuser', :appears => true)
-    StopForumSpam::Spammer.is_spammer?('testuser').should be_true
-  end
-
-  it "should return false when a spammer is not found by username" do
-    fake_get_response(:username => 'testuser', :appears => false)
-    StopForumSpam::Spammer.is_spammer?('testuser').should be_false
-  end
-
-  context '#guess_type' do
-    it 'should return the ip type' do
-      StopForumSpam::Spammer.guess_type('127.0.0.1').should.eql?  "ip"
-    end
-
-    it 'should return the email type ' do
-      StopForumSpam::Spammer.guess_type('test@testuser.com').should.eql? "email"
-    end
-
-    it 'should return the username type' do
-      StopForumSpam::Spammer.guess_type("testuser").should.eql? 'username'
-    end
-  end
-  
 end

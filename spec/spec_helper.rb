@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'activesupport'
+require 'active_support'
 require 'spec'
 require 'fakeweb'
 
@@ -11,6 +11,10 @@ def fake_get_response(options={})
   options[:type] = id_type
   options[:string] = format_options(options)
   FakeWeb.register_uri(:get, url, options)
+end
+
+def fake_post_response(api_key, ip_addr, email, username, options={})
+  FakeWeb.register_uri(:post, "http://stopforumspam.com:80/post.php", options)
 end
 
 def format_options(options)
