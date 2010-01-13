@@ -1,38 +1,39 @@
-= stop_forum_spam
+# stop\_forum\_spam
 
-* http://github.com/ldenman/stop_forum_spam
+http://github.com/ldenman/stop\_forum\_spam
 
-== DESCRIPTION:
+### DESCRIPTION:
+
 Small api wrapper for querying a spammer based on ip, email, or username information stored on http://stopforumspam.com
 
-Thanks to Russ Jackson for providing an api into stopforumspam.com.
+**Thanks to Russ Jackson for providing an api into stopforumspam.com.**
 
 
-== SYNOPSIS:
-  query and post to stopforumspam.com
-  to post, you will need to register for an api key here: http://www.stopforumspam.com/signup
+### SYNOPSIS:
+    # query and post to stopforumspam.com
+    # to post, you will need to register for an api key here: http://www.stopforumspam.com/signup
   
-  # is so and so a spammer?
-  StopForumSpam::Spammer.is_spammer?('12@42up.com') # by email
-  StopForumSpam::Spammer.is_spammer?('broocorkidica') # by username
-  StopForumSpam::Spammer.is_spammer?('212.235.107.199') # by IP
+    # is so and so a spammer?
+    StopForumSpam::Spammer.is_spammer?('12@42up.com') # by email
+    StopForumSpam::Spammer.is_spammer?('broocorkidica') # by username
+    StopForumSpam::Spammer.is_spammer?('212.235.107.199') # by IP
   
-  # so and so _is_ a spammer!
-  client = StopForumSpam::Client.new('12346789')
-  client.post(:ip_address => "127.0.0.1", :email => "spam@ru.com", :username => "iSpam")
+    # so and so _is_ a spammer!
+    client = StopForumSpam::Client.new('12346789')
+    client.post(:ip_address => "127.0.0.1", :email => "spam@ru.com", :username => "iSpam")
   
-== REQUIREMENTS:
+### REQUIREMENTS:
 
 * httparty
 
-== INSTALL:
+### INSTALL:
 
 * sudo gem install gemcutter
 * sudo gem tumble
 * sudo gem install httpary
 * sudo gem install stop_forum_spam
 
-== LICENSE:
+### LICENSE:
 
 (The MIT License)
 

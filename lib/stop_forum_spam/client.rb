@@ -12,10 +12,11 @@ module StopForumSpam
     
     def post(options={})
       self.class.post('/post.php', 
-        :body => {:ip_addr => options[:ip_address], 
-          :email=> options[:email], 
+        :body => {
+          :ip_addr => options[:ip_address], 
+          :email => options[:email], 
           :username => options[:username], 
-          :api_key => api_key})
+          :api_key => api_key })
     end
     
     def get(options={})
