@@ -16,7 +16,7 @@ describe StopForumSpam::Client do
   context 'posts a spammer' do
     context 'with a valid ip address, email address, and username' do
       before do
-        fake_post_response('123456789', '127.0.0.1', 'spammer%40ru.com', 'spammer500', :string => "valid post")
+        fake_post_response('123456789', '127.0.0.1', 'spammer%40ru.com', 'spammer500', :body => "valid post")
         client = StopForumSpam::Client.new('123456789')
         @response = client.post(:id_address => '127.0.0.1', :email => 'spammer@ru.com', :username => 'spammer500')
       end
