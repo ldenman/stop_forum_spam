@@ -1,4 +1,6 @@
 module StopForumSpam
+  class UnsuccessfulResponse < StandardError; end
+
   class Client
     include HTTParty
     format :xml
@@ -20,7 +22,18 @@ module StopForumSpam
     end
     
     def get(options={})
-      self.class.get('/api', options)
+      ensure_success { self.class.get('/api', options) }
+    end
+
+    private
+
+    # Wraps the given request block to ensure that the response's success
+    # flag is true.
+    #
+    def ensure_success
+      result = yield
+      raise UnsuccessfulResponse.new unless result['response']['success'] == 'true'
+      result
     end
   end
 end
