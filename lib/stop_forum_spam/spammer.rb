@@ -67,6 +67,7 @@ module StopForumSpam
 
     alias_method :count, :frequency
     alias_method :appears?, :appears
+    alias_method :last_seen_at, :last_seen
 
     def initialize(id, attributes = {})
       @id         = id
