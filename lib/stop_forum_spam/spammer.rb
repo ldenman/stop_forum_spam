@@ -55,6 +55,7 @@ module StopForumSpam
         end
 
         # Convert types
+        attributes[:type] = attributes[:type].to_sym
         attributes[:appears] = attributes[:appears] == 'yes' ? true : false
         attributes[:frequency] = attributes[:frequency].to_i
         attributes[:last_seen] = Time.parse("#{attributes[:last_seen]} UTC") rescue nil

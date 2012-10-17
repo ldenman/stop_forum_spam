@@ -47,7 +47,7 @@ describe StopForumSpam::Spammer do
 
         it { should be_a(StopForumSpam::Spammer) }
         its(:id) { should == '127.0.0.1' }
-        its(:type) { should == 'ip' }
+        its(:type) { should == :ip }
       end
 
       context "that does not appear in the database" do
