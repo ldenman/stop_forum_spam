@@ -13,7 +13,7 @@ module StopForumSpam
     end
     
     def post(options={})
-      self.class.post('/post.php', 
+      self.class.post('/add.php', 
         :body => {
           :ip_addr => options[:ip_address], 
           :email => options[:email], 

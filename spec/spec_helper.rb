@@ -22,7 +22,7 @@ def fake_get_response(options = {})
 end
 
 def fake_post_response(api_key, ip_addr, email, username, options={})
-  FakeWeb.register_uri(:post, "http://stopforumspam.com:80/post.php", options)
+  FakeWeb.register_uri(:post, "http://stopforumspam.com/add.php", options)
 end
 
 def format_options(options)
