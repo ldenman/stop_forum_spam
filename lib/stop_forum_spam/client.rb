@@ -1,11 +1,15 @@
 module StopForumSpam
   class UnsuccessfulResponse < StandardError; end
+  class IncompleteSubmission < StandardError; end
 
   class Client
     include HTTParty
+
+    REQUIRED_PARAMETERS = [:ip_address, :username, :email]
+
     format :xml
     base_uri("http://stopforumspam.com")
-    
+
     attr_accessor :api_key
     
     def initialize(api_key=nil)
@@ -13,6 +17,8 @@ module StopForumSpam
     end
     
     def post(options={})
+      raise IncompleteSubmission.new unless REQUIRED_PARAMETERS.all? { |p| options.include?(p) }
+
       self.class.post('/add.php', 
         :body => {
           :ip_addr => options[:ip_address], 
