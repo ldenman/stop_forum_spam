@@ -50,7 +50,13 @@ module StopForumSpam
 
         attributes = [:type, :frequency, :last_seen, :appears].inject({}) do |attributes,name|
           response_name = (name == :last_seen ? :lastseen : name).to_s
-          attributes[name] = i ? response[response_name][i] : response[response_name]
+          if response[response_name]
+            if i && response[response_name].is_a?(Array)
+              attributes[name] = response[response_name][i]
+            else
+              attributes[name] = response[response_name]
+            end
+          end
           attributes
         end
 
