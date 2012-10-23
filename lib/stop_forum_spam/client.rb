@@ -10,25 +10,31 @@ module StopForumSpam
     format :xml
     base_uri("http://stopforumspam.com")
 
-    attr_accessor :api_key
-    
-    def initialize(api_key=nil)
-      @api_key = api_key
+    attr_accessor :api_key, :test_mode
+
+    alias test_mode? test_mode
+
+    def initialize(options = {})
+      options = {:api_key => options} unless options.is_a?(Hash)
+      options = {:test_mode => false}.merge(options)
+
+      @api_key = options[:api_key]
+      @test_mode = options[:test_mode]
     end
     
-    def post(options={})
+    def post(options = {})
       raise IncompleteSubmission.new unless REQUIRED_PARAMETERS.all? { |p| options.include?(p) }
 
       self.class.post('/add.php', 
-        :body => {
+        :body => process_options(
           :ip_addr => options[:ip_address], 
           :email => options[:email], 
           :username => options[:username], 
-          :api_key => api_key })
+          :api_key => api_key))
     end
     
-    def get(options={})
-      ensure_success { self.class.get('/api', options) }
+    def get(options = {})
+      ensure_success { self.class.get('/api', process_options(options)) }
     end
 
     private
@@ -40,6 +46,13 @@ module StopForumSpam
       result = yield
       raise UnsuccessfulResponse.new unless result['response']['success'] == 'true'
       result
+    end
+
+    # Augments options with any defaults.
+    #
+    def process_options(options)
+      options[:testmode] = true if test_mode?
+      options
     end
   end
 end
