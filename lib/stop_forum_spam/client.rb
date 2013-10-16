@@ -30,7 +30,8 @@ module StopForumSpam
           :ip_addr => options[:ip_address], 
           :email => options[:email], 
           :username => options[:username], 
-          :api_key => api_key))
+          :api_key => api_key),
+        :timeout => options[:timeout])
     end
     
     def get(options = {})
