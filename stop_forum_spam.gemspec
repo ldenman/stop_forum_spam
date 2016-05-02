@@ -11,5 +11,5 @@ spec = Gem::Specification.new do |s|
   s.email = "lake@lakedenman.com"
   s.homepage = "http://lakedenman.com"
 
-  s.add_runtime_dependency "httparty", "~> 0.9.0"
+  s.add_runtime_dependency "httparty", "~> 0.10"
 end
