@@ -10,4 +10,6 @@ spec = Gem::Specification.new do |s|
   s.author = "Lake Denman"
   s.email = "lake@lakedenman.com"
   s.homepage = "http://lakedenman.com"
+
+  s.add_runtime_dependency "httparty", "~> 0.10"
 end

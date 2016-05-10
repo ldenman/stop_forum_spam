@@ -3,58 +3,99 @@ require 'spec_helper'
 describe StopForumSpam::Spammer do
   FakeWeb.allow_net_connect = false
   
-  context 'initializing a spammer by ip, email, and username' do
-    { :ip => '127.0.0.1', 
-      :email => 'test@tester.com', 
-      :username => 'testuser'
-    }.each do |id_type, v|
-      
-      it "initializes with an #{id_type}" do
-        fake_get_response(id_type => v)
-        StopForumSpam::Spammer.new(v).class.should == StopForumSpam::Spammer
+  describe ".new" do
+    subject { StopForumSpam::Spammer.new(id, attributes) }
+
+    let(:attributes) { {} }
+
+    context "where id is an ip" do
+      let(:id) { '127.0.0.1' }
+
+      it { should be_a(StopForumSpam::Spammer) }
+      its(:id) { should == id }
+      its(:type) { should == :ip }
+    end
+
+    context "where id is an email address" do
+      let(:id) { 'a@bad.example' }
+
+      it { should be_a(StopForumSpam::Spammer) }
+      its(:id) { should  == id }
+      its(:type) { should == :email }
+    end
+
+    context "where id is a username" do
+      let(:id) { 'spammer' }
+
+      it { should be_a(StopForumSpam::Spammer) }
+      its(:id) { should == id }
+      its(:type) { should == :username }
+    end
+  end
+
+  describe ".find" do
+    subject { StopForumSpam::Spammer.find(id) }
+
+    before(:each) { fake_get_response(type => id, :appears => appears) }
+
+    context "given an ip address" do
+      let(:id) { '127.0.0.1' }
+      let(:type) { :ip }
+
+      context "that appears in the database" do
+        let(:appears) { true }
+
+        it { should be_a(StopForumSpam::Spammer) }
+        its(:id) { should == '127.0.0.1' }
+        its(:type) { should == :ip }
+      end
+
+      context "that does not appear in the database" do
+        let(:appears) { false }
+
+        it { should be_nil }
       end
     end
   end
 
-  it "should initialize a spammer by ip" do
-    fake_get_response(:ip => '127.0.0.1')
-    spammer = StopForumSpam::Spammer.new('127.0.0.1')
-    spammer.type.should == 'ip'
-  end
+  describe ".query" do
+    subject { StopForumSpam::Spammer.query(parameters) }
 
-  it 'should initialize a spammer by email' do
-    fake_get_response(:email => 'test%40tester.com')
-    spammer = StopForumSpam::Spammer.new('test@tester.com')
-    spammer.type.should == 'email'
-  end
+    before(:each) do
+      fake_get_response(parameters.map { |(n,v)| {n => v}.merge(:appears => appears) })
+    end
 
-  it 'should initialize a spammer by username' do
-    fake_get_response(:username => 'testuser')
-    spammer = StopForumSpam::Spammer.new('testuser')
-    spammer.type.should == 'username'
-  end
+    context "given a single parameter" do
+      let(:parameters) { {:ip => '127.0.0.1'} }
 
-  it 'should have attributes from the response' do
-    last_seen = "2009-04-16 23:11:19"
-    fake_get_response(:ip => '127.0.0.1', :last_seen => last_seen, :appears => true)
-    spammer = StopForumSpam::Spammer.new('127.0.0.1')
-    spammer.type.should == "ip"
-    spammer.appears?.should be_true
-    spammer.last_seen.should == last_seen
-  end
+      context "that does not appear in the database" do
+        let(:appears) { false }
 
-  context '#count' do
-    it 'should count the amount of times the spammer has been added' do
-      fake_get_response(:ip => '127.0.0.1', :frequency => 41)
-      spammer = StopForumSpam::Spammer.new('127.0.0.1')
-      spammer.count.should == '41'
+        it { should_not be_empty }
+      end
+
+      context "that does appear in the database" do
+        let(:appears) { true }
+
+        it { should_not be_empty }
+      end
+    end
+
+    context "given more than one parameter" do
+      let(:parameters) { {:ip => '127.0.0.1', :email => 'a@bad.example'} }
+      let(:appears) { true }
+
+      it { should_not be_empty }
+      its(:length) { should be > 1 }
     end
   end
 
-  it 'should have an id' do
-    fake_get_response(:ip => '127.0.0.1')
-    spammer = StopForumSpam::Spammer.new('127.0.0.1')
-    spammer.id.should == '127.0.0.1'
+  describe '#count' do
+    it 'should count the amount of times the spammer has been added' do
+      fake_get_response(:ip => '127.0.0.1', :frequency => 41, :appears => true)
+      spammer = StopForumSpam::Spammer.find('127.0.0.1')
+      spammer.count.should == 41
+    end
   end
 
   it "should find a spammer by ip" do
@@ -68,12 +109,12 @@ describe StopForumSpam::Spammer do
   end
 
   it "should find a spammer by email" do
-    fake_get_response(:email => 'test%40tester.com', :appears => true)
+    fake_get_response(:email => 'test@tester.com', :appears => true)
     StopForumSpam::Spammer.is_spammer?("test@tester.com").should be_true
   end
 
   it "should return false when a spammer is not found by email" do
-    fake_get_response(:email => 'test%40tester.com', :appears => false)
+    fake_get_response(:email => 'test@tester.com', :appears => false)
     StopForumSpam::Spammer.is_spammer?('test@tester.com').should be_false
   end
 

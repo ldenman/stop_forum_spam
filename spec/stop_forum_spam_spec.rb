@@ -13,17 +13,37 @@ describe StopForumSpam::Client do
     end
   end
   
-  context 'posts a spammer' do
+  describe "#post" do
+    subject { client.post(parameters) }
+
+    let(:client) { StopForumSpam::Client.new('123456789') }
+
     context 'with a valid ip address, email address, and username' do
-      before do
-        fake_post_response('123456789', '127.0.0.1', 'spammer%40ru.com', 'spammer500', :string => "valid post")
-        client = StopForumSpam::Client.new('123456789')
-        @response = client.post(:id_address => '127.0.0.1', :email => 'spammer@ru.com', :username => 'spammer500')
+      let(:parameters) { {:ip_address => '127.0.0.1', :email => 'spammer@ru.com', :username => 'spammer500'} }
+
+      before(:each) do
+        fake_post_response('123456789', '127.0.0.1', 'spammer%40ru.com', 'spammer500', :body => "valid post")
       end
-    
-      it "should return true " do
-        @response.should be_true
-      end
+
+      it { should be_true }
+    end
+
+    context "without an ip address" do
+      let(:parameters) { {:email => 'spammer@ru.com', :username => 'spammer500'} }
+
+      it("raises") { expect { subject }.to raise_error(StopForumSpam::IncompleteSubmission) }
+    end
+
+    context "without a username" do
+      let(:parameters) { {:ip_address => '127.0.0.1', :email => 'spammer@ru.com'} }
+
+      it("raises") { expect { subject }.to raise_error(StopForumSpam::IncompleteSubmission) }
+    end
+
+    context "without an email address" do
+      let(:parameters) { {:username => 'spammer500', :ip_address => '127.0.0.1'} }
+
+      it("raises") { expect { subject }.to raise_error(StopForumSpam::IncompleteSubmission) }
     end
   end
 end
